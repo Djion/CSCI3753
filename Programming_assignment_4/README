@@ -9,15 +9,17 @@ With help from Junho Ahn - 2012
 
 Revised by Shivakant Mishra - Fall 2016
 
+Revised by Alex Ring - Fall 2016
 ---Folders---
 handout - Assignment description and documentation
 
 ---Executables---
 ./testscript - A simple bash script for running a few sample test cases
-./pi - A simple program for statistically calculating pi
 ./pi-sched - A simple program for statistically calculating pi using
              a specific scheduling policy
-./rw - A simple i/o bound example program.
+./rw-sched - A simple i/o bound program using a specific scheduling policy
+./mixed-sched - A simple program that is both I/O and CPU bound, using a specific scheduling policy
+./FINALRUN - A bash script that runs testscript 10 times
 
 ---Examples---
 Build:
@@ -26,23 +28,40 @@ Build:
 Clean:
  make clean
 
-pi:
- ./pi
- ./pi <Number of Iterations>
-
 pi-sched:
  ./pi-sched
  ./pi-sched <Number of Iterations>
  ./pi-sched <Number of Iterations> <Scheduling Policy>
  ./pi-sched <Number of Iterations> <Scheduling Policy> <Priority Variation>
- ./pi-sched <Number of Iterations> <Scheduling Policy> <Priority Variation> <Low/Med/High Concurrent Processes>
-rw:
- ./rw
- ./rw <#Bytes to Write to Output File>
- ./rw <#Bytes to Write to Output File> <Block Size>
- ./rw <#Bytes to Write to Output File> <Block Size> <Input Filename>
- ./rw <#Bytes to Write to Output File> <Block Size> <Input Filename> <Output Filename>
-
+ ./pi-sched <Number of Iterations> <Scheduling Policy> <Priority Variation> <Concurrent Variation>
+rw-sched:
+ ./rw-sched
+ ./rw-sched <#Bytes to Write to Output File>
+ ./rw-sched <#Bytes to Write to Output File> <Block Size>
+ ./rw-sched <#Bytes to Write to Output File> <Block Size> <Input Filename>
+ ./rw-sched <#Bytes to Write to Output File> <Block Size> <Input Filename> <Output Filename>
+ ./rw-sched <#Bytes to Write to Output File> <Block Size> <Input Filename> <Output Filename> <Priority Variation> <Concurrent Variation>
+mixed-sched:
+ ./mixed-sched
+ ./mixed-sched <Number of Iterations>
+ ./mixed-sched <Number of Iterations> <Scheduling Policy>
+ ./mixed-sched <Number of Iterations> <Scheduling Policy> <Priority Variation>
+ ./mixed-sched <Number of Iterations> <Scheduling Policy> <Priority Variation> <Concurrent Variation>
 testscript:
  ./testscript
+ 
+Valid Options for above flags:
+<Number of Iterations> :  Any integer > 0
+<Scheduling Policy>    :  SCHED_OTHER
+                          SCHED_FIFO
+                          SCHED_RR
+<Priority Variation>   :  0 = Same Priority
+                          1 = Random Priority
+<Concurrent Variation> :  LOW = 5-10 Concurrent Processes
+                          MED = 10 - 100 Concurrent Processes
+                          HIGH = 100 - 1000 Concurrent Processes
+<#Bytes to Write>      :  Any Integer > 0
+<Block Size>           :  Any Integer > 0
+<Input Filename>       :  Name of input file
+<Output Filename>      :  Name of output file
 
