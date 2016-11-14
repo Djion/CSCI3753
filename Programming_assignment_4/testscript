@@ -1,0 +1,399 @@
+#/!/bin/bash
+
+#File: testscript
+#Author: Andy Sayler
+#Revised: Shivakant Mishra
+#Project: CSCI 3753 Programming Assignment 4
+#Create Date: 2016/30/10
+#Modify Date: 2016/30/10
+#Description:
+#	A simple bash script to run a signle copy of each test case
+#	and gather the relevent data.
+
+
+ITERATIONS=100000000
+#ITERATIONS=1
+BYTESTOCOPY=102400
+BLOCKSIZE=1024
+TIMEFORMAT="wall=%e user=%U system=%S CPU=%P i-switched=%c v-switched=%w"
+MAKE="make -s"
+
+echo Building code...
+$MAKE clean
+$MAKE
+clear
+echo Starting test runs...
+
+#-------------------------------
+#I/O Bound Section
+#-------------------------------
+
+#-------------------------------
+#CFS IE SCHED_OTHER SECTION
+#-------------------------------
+echo ---------------------------
+echo Starting CPU Bound Tests
+echo ---------------------------
+#CFS LOW Same Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_OTHER with LOW simultaneous process same priority...
+/usr/bin/time -f "$TIMEFORMAT" ./pi-sched $ITERATIONS SCHED_OTHER 0 LOW > /dev/null
+
+#CFS LOW Mixed Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_OTHER with LOW simultaneous process mixed priority...
+/usr/bin/time -f "$TIMEFORMAT" ./pi-sched $ITERATIONS SCHED_OTHER 1 LOW> /dev/null
+
+#CFS MED Same Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_OTHER with MED simultaneous process same priority...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./pi-sched $ITERATIONS SCHED_OTHER 0 MED> /dev/null
+
+#CFS MED Mixed Priority
+echo 
+echo Calculating pi over $ITERATIONS iterations using SCHED_OTHER with MED simultaneous process mixed priority...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./pi-sched $ITERATIONS SCHED_OTHER 1 MED> /dev/null
+
+#CFS HIGH Same Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_OTHER with HIGH simulataneous process same priority...
+/usr/bin/time -f "$TIMEFORMAT" ./pi-sched $ITERATIONS SCHED_OTHER 0 HIGH > /dev/null
+
+#CFS HIGH Mixed Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_OTHER with HIGH simulataneous process mixed priority...
+/usr/bin/time -f "$TIMEFORMAT" ./pi-sched $ITERATIONS SCHED_OTHER 1 HIGH > /dev/null
+
+
+#-------------------------------
+#FIFO IE SCHED_FIFO SECTION
+#-------------------------------
+#FIFO LOW Same Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_FIFO with LOW simultaneous process same priority...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./pi-sched $ITERATIONS SCHED_FIFO 0 LOW> /dev/null
+
+#FIFO LOW Mixed Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_FIFO with LOW simultaneous process mixed priority...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./pi-sched $ITERATIONS SCHED_FIFO 1 LOW> /dev/null
+
+#FIFO MED Same Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_FIFO with MED simultaneous process same priority...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./pi-sched $ITERATIONS SCHED_FIFO 0 MED > /dev/null
+
+#FIFO MED Mixed Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_FIFO with MED simultaneous process mixed priority...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./pi-sched $ITERATIONS SCHED_FIFO 1 MED > /dev/null
+
+#FIFO HIGH Same Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_FIFO with HIGH simultaneous process same priority...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./pi-sched $ITERATIONS SCHED_FIFO 0 HIGH > /dev/null
+
+#FIFO HIGH mixed Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_FIFO with HIGH simultaneous process mixed priority...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./pi-sched $ITERATIONS SCHED_FIFO 1 HIGH > /dev/null
+
+#-------------------------------
+#RR IE SCHED_RR SECTION
+#-------------------------------
+
+#RR LOW Same Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_RR with LOW simultaneous process same priority...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./pi-sched $ITERATIONS SCHED_RR 0 LOW> /dev/null
+
+#RR LOW Mixed Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_RR with LOW simultaneous process mixed priority...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./pi-sched $ITERATIONS SCHED_RR 1 LOW> /dev/null
+
+#RR MED Same Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_RR with MED simultaneous process same priority...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./pi-sched $ITERATIONS SCHED_RR 0 MED> /dev/null
+
+#RR MED Mixed Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_RR with MED simultaneous process mixed priority...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./pi-sched $ITERATIONS SCHED_RR 1 MED> /dev/null
+
+#RR HIGH Same Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_RR with HIGH simultaneous process same priority...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./pi-sched $ITERATIONS SCHED_RR 0 HIGH> /dev/null
+
+#RR HIGH Mixed Priority
+echo
+echo Calculating pi over $ITERATIONS iterations using SCHED_RR with HIGH simultaneous process mixed priority...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./pi-sched $ITERATIONS SCHED_RR 1 HIGH> /dev/null
+
+
+
+#-------------------------------
+#I/O BOUND SECTION
+#-------------------------------
+
+
+echo
+
+echo ---------------------------
+echo STARTING I/O BOUND SECTION
+echo ---------------------------
+echo Copying $BYTESTOCOPY bytes in blocks of $BLOCKSIZE from rwinput to rwoutput
+
+
+#-------------------------------
+#CFS Scheduler
+#-------------------------------
+#CFS Low Same
+echo
+echo using SCHED_OTHER with LOW simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_OTHER 0 LOW> /dev/null
+rm -rf rwoutput*
+
+#CFS Low mixed
+echo
+echo using SCHED_OTHER with LOW simultaneous process mixed priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_OTHER 1 LOW> /dev/null
+rm -rf rwoutput*
+
+#CFS med same
+echo
+echo using SCHED_OTHER with MED simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_OTHER 0 MED> /dev/null
+rm -rf rwoutput*
+
+#CFS med mixed
+echo
+echo using SCHED_OTHER with MED simultaneous process mixed priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_OTHER 1 MED> /dev/null
+rm -rf rwoutput*
+
+#CFS high same
+echo
+echo using SCHED_OTHER with HIGH simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_OTHER 0 HIGH> /dev/null
+rm -rf rwoutput*
+
+#CFS high mixed
+echo
+echo using SCHED_OTHER with HIGH simultaneous process mixed priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_OTHER 1 HIGH> /dev/null
+rm -rf rwoutput*
+
+#-------------------------------
+#FIFO Scheduler
+#-------------------------------
+#FIFO low same
+echo
+echo using SCHED_FIFO with LOW simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_FIFO 0 LOW> /dev/null
+rm -rf rwoutput*
+
+#FIFO low mixed
+echo
+echo using SCHED_FIFO with LOW simultaneous process mixed priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_FIFO 1 LOW> /dev/null
+rm -rf rwoutput*
+
+#FIFO med same
+echo
+echo using SCHED_FIFO with MED simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_FIFO 0 MED> /dev/null
+rm -rf rwoutput*
+
+#FIFO med mixed
+echo
+echo using SCHED_FIFO with MED simultaneous process mixed priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_FIFO 1 MED> /dev/null
+rm -rf rwoutput*
+
+#FIFO high same
+echo
+echo using SCHED_FIFO with HIGH simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_FIFO 0 HIGH> /dev/null
+rm -rf rwoutput*
+
+#FIFO high mixed
+echo
+echo using SCHED_FIFO with HIGH simultaneous process mixed priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_FIFO 1 HIGH> /dev/null
+rm -rf rwoutput*
+
+#-------------------------------
+#RR Scheduler
+#-------------------------------
+
+#RR low same
+echo
+echo using SCHED_RR with LOW simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_RR 0 LOW> /dev/null
+rm -rf rwoutput*
+
+#RR low mixed
+echo
+echo using SCHED_RR with LOW simultaneous process mixed priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_RR 1 LOW> /dev/null
+rm -rf rwoutput*
+
+#RR med same
+echo
+echo using SCHED_RR with MED simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_RR 0 MED> /dev/null
+rm -rf rwoutput*
+
+#RR med mixed
+echo
+echo using SCHED_RR with MED simultaneous process mixed priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_RR 1 MED> /dev/null
+rm -rf rwoutput*
+
+#RR high same
+echo
+echo using SCHED_RR with HIGH simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_RR 0 HIGH> /dev/null
+rm -rf rwoutput*
+
+#RR high mixed
+echo
+echo using SCHED_RR with HIGH simultaneous process mixed priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./rw-sched $BYTESTOCOPY $BLOCKSIZE rwinput rwoutput SCHED_RR 1 HIGH> /dev/null
+rm -rf rwoutput*
+
+
+#-------------------------------
+#MIXED CPU/IO Section
+#-------------------------------
+echo
+echo ---------------------------
+echo STARTING MIXED I/O CPU SECTION
+echo ---------------------------
+#------------------------------
+#CFS Scheduler
+#-------------------------------
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with LOW simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_OTHER 0 LOW> /dev/null
+rm -rf mixedOutput*
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with LOW simultaneous process mixed priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_OTHER 1 LOW> /dev/null
+rm -rf mixedOutput*
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with MED simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_OTHER 0 MED> /dev/null
+rm -rf mixedOutput*
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with MED simultaneous process mixed priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_OTHER 1 MED> /dev/null
+rm -rf mixedOutput*
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with HIGH simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_OTHER 0 HIGH> /dev/null
+rm -rf mixedOutput*
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with HIGH simultaneous process mixed priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_OTHER 1 HIGH> /dev/null
+rm -rf mixedOutput*
+#-------------------------------
+#FIFO Scheduler
+#-------------------------------
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with LOW simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_FIFO 0 LOW> /dev/null
+rm -rf mixedOutput*
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with LOW simultaneous process mixed priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_FIFO 1 LOW> /dev/null
+rm -rf mixedOutput*
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with MED simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_FIFO 0 MED> /dev/null
+rm -rf mixedOutput*
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with MED simultaneous process mixed priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_FIFO 1 MED> /dev/null
+rm -rf mixedOutput*
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with HIGH simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_FIFO 0 HIGH> /dev/null
+rm -rf mixedOutput*
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with HIGH simultaneous process mixed priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_FIFO 1 HIGH> /dev/null
+rm -rf mixedOutput*
+
+#-------------------------------
+#RR Scheduler
+#-------------------------------
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with LOW simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_RR 0 LOW> /dev/null
+rm -rf mixedOutput*
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with LOW simultaneous process mixedpriorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_RR 1 LOW> /dev/null
+rm -rf mixedOutput*
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with MED simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_RR 0 MED> /dev/null
+rm -rf mixedOutput*
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with MED simultaneous process mixedpriorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_RR 1 MED> /dev/null
+rm -rf mixedOutput*
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with HIGH simultaneous process same priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_RR 0 HIGH> /dev/null
+rm -rf mixedOutput*
+
+
+echo
+echo MIXED I/O and CPU using SCHED_OTHER with HIGH simultaneous process mixed priorities...
+/usr/bin/time -f "$TIMEFORMAT" sudo ./mixed-sched $ITERATIONS SCHED_RR 1 HIGH> /dev/null
+rm -rf mixedOutput*
+
+
+
+
+
+
+
